@@ -60,7 +60,7 @@ async def removeItem(call: types.CallbackQuery):
 
 
 @dp.callback_query_handler(text_endswith=":decrement-cartItem")
-async def IncreaseQuantity(call: types.CallbackQuery):
+async def DecreaseQuantity(call: types.CallbackQuery):
     item_code = call.data.split(":")[0]
     quantity = await db.getQuantityByItemCode(item_code)
     if quantity[0] > 1:
@@ -102,7 +102,7 @@ async def sendCartOrder(user_id):
     calc = ""
     for item in cartItems:
         product = await db.getProductName(item[1])
-        await db.giveOrder(cart_id=cart_id, product_id=item[1], quantity=item[0])
+        await db.giveOrder(user_id=user_id, product_id=item[1], quantity=item[0])
         text += f"Mahsulot nomi: {product[0]} x {item[0]} ta\n"
         details.append((product[1] * item[0]))
         calc += f"{'{:,}'.format(product[1])}x{item[0]} = {'{:,}'.format(product[1] * item[0])} sum\n"
@@ -236,11 +236,6 @@ async def addAnotherLocation(call: CallbackQuery):
     await call.message.answer("Yangi manzilingizni kiriting", reply_markup=getLocation_btn)
 
 
-async def sendOrder(product_name, quantity, user_fullname, phone_num):
-    text = f"Buyurtma: {product_name}\nSoni:{quantity}\nBuyurtmachi: {user_fullname}\nBuyurtmachi raqami: {phone_num}"
-    await bot.send_message(chat_id=CHANNELS[0], text=text)
-
-
 @dp.callback_query_handler(text_startswith="location")
 async def chooseLocation(call: CallbackQuery):
     await call.message.delete()
@@ -259,7 +254,7 @@ async def chooseLocation(call: CallbackQuery):
     counter = 0
     for item in cartItems:
         product = await db.getProductName(item[1])
-        await db.giveOrder(cart_id=cart_id, product_id=item[1], quantity=item[0])
+        await db.giveOrder(user_id=user_id, product_id=item[1], quantity=item[0])
         counter += 1
         text += f"{counter}. {product[0]} -- {'{:,}'.format(product[1])}x{item[0]} = {'{:,}'.format(product[1] * item[0])} \n"
         details.append((product[1] * item[0]))
@@ -274,11 +269,8 @@ async def chooseLocation(call: CallbackQuery):
 @dp.message_handler(content_types=["location"], is_forwarded=False)
 async def getLocation(msg: types.Message):
     user_id = msg.from_user.id
-    state = await db.getBuyState(user_id)
     cart_id = await db.get_cart_id(user_id=user_id)
     product_id = await db.getProductId(cart_id=cart_id)
-    quantity = await db.get_quantity(cart_id=cart_id)
-    item_code = await db.getItemCode(cart_id=cart_id, product_id=product_id)
     getname = await db.getNameAndPhone(user_id=user_id)
     phone = getname[1]
     fullname = getname[0]
@@ -290,29 +282,22 @@ async def getLocation(msg: types.Message):
     text = f"<b>Buyurtmangiz qabul qilindi. Belgilangan vaqt ichida yetkazib beramiz.</b>:\n\n<b>Buyurtma " \
            f"ma’lumotlari:</b>\n\n<b>Buyurtma raqami:</b> #{cart_id[0]}\n\n<b>Tanlangan Mahsulotlar</b>\n\n"
 
-    if not state:
-        await db.giveOrder(quantity=quantity[0][0], cart_id=cart_id, product_id=product_id)
-        await db.RemoveCartItem(item_code=item_code)
-        product_name = await db.getProductName(product_id=product_id)
+    await sendCartOrder(user_id)
+    cartItems = await db.getAllCartItems(cart_id)
+    details = []
+    counter = 0
+    for item in cartItems:
+        product = await db.getProductName(item[1])
+        await db.giveOrder(user_id=user_id, product_id=item[1], quantity=item[0])
+        counter += 1
+        text += f"{counter}. {product[0]} -- {'{:,}'.format(product[1])}x{item[0]} = {'{:,}'.format(product[1] * item[0])} \n"
+        details.append((product[1] * item[0]))
+    text += f"\n<b>💰Jami summa</b>: {'{:,}'.format(sum(details))} so'm\n\n<b>Yetkazib beriladigan manzil: </b>{location}." \
+            f"\n<b>Telefon raqam:</b>{formatPhoneNumber(phone)}"
 
-        await sendOrder(product_name=product_name[0], quantity=quantity[0][0], user_fullname=fullname,
-                        phone_num=phone)
-
-    elif state:
-        await sendCartOrder(user_id)
-        cartItems = await db.getAllCartItems(cart_id)
-        details = []
-        counter = 0
-        for item in cartItems:
-            product = await db.getProductName(item[1])
-            await db.giveOrder(cart_id=cart_id, product_id=item[1], quantity=item[0])
-            counter += 1
-            text += f"{counter}. {product[0]} -- {'{:,}'.format(product[1])}x{item[0]} = {'{:,}'.format(product[1] * item[0])} \n"
-            details.append((product[1] * item[0]))
-        text += f"\n<b>💰Jami summa</b>: {'{:,}'.format(sum(details))} so'm\n\n<b>Yetkazib beriladigan manzil: </b>{location}." \
-                f"\n<b>Telefon raqam:</b>{formatPhoneNumber(phone)}"
-        await db.RemoveAllCartItems(cart_id)
-        await db.buyAllItems(user_id, False)
+    await db.RemoveAllCartItems(cart_id=cart_id)
+    await db.RemoveCartByUserId(user_id=user_id)
+    await db.buyAllItems(user_id, False)
     await db.NoticeShopping(user_id=user_id)
     await msg.answer(text=text, reply_markup=AgainBuy)
 

@@ -88,7 +88,7 @@ class OrderedItems(models.Model):
         verbose_name = "Buyurtma qilngan mahsulot"
         verbose_name_plural = "Buyurtma qilngan mahsulotlar"
     product = models.ForeignKey(Product, verbose_name="Mahsulot", on_delete=models.CASCADE)
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    user_id = models.IntegerField(verbose_name="Client telegram Id si")
     quantity = models.IntegerField(verbose_name="Miqdori")
 
 

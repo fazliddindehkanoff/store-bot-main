@@ -58,16 +58,6 @@ WSGI_APPLICATION = 'config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'd83hns5j4inmoc',
-#         'USER': 'monasvtqkblphb',
-#         'PASSWORD': 'd436d22c156d9247778ad08e343c99f7841d74714f13652b921616db836a518a',
-#         'HOST': 'ec2-52-72-252-211.compute-1.amazonaws.com',
-#         'PORT': '5432',
-#     }
-# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',

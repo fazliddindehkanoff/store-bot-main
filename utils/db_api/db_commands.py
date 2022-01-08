@@ -167,10 +167,10 @@ class Database:
                            " values (%s, %s, %s, %s)", (quantity, cart_id, product_id, item_code))
             self.connection.commit()
 
-    async def giveOrder(self, quantity, cart_id, product_id):
+    async def giveOrder(self, quantity, user_id, product_id):
         with self.connection.cursor() as cursor:
-            cursor.execute("insert into storebot_ordereditems (quantity, cart_id, product_id)"
-                           "values (%s, %s, %s)", (quantity, cart_id, product_id))
+            cursor.execute("insert into storebot_ordereditems (quantity, user_id, product_id)"
+                           "values (%s, %s, %s)", (quantity, user_id, product_id))
             self.connection.commit()
 
     async def giveOrderForAllItems(self, cart_id):
