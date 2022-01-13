@@ -1,4 +1,10 @@
 from pathlib import Path
+from environs import Env
+import os
+
+env = Env()
+env.read_env()
+
 
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -61,10 +67,10 @@ WSGI_APPLICATION = 'config.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'e-bozor',
-        'USER': 'bob',
-        'PASSWORD': 'admin',
-        'HOST': 'localhost',
+        'NAME': env.str("DB_NAME"),
+        'USER': env.str("DB_USER"),
+        'PASSWORD': env.str("DB_PASS"),
+        'HOST': env.str("DB_HOST"),
         'PORT': '5432',
     }
 }
@@ -101,8 +107,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
-import os
-
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 

@@ -1,9 +1,14 @@
-BOT_TOKEN = "1628030439:AAG50NPXOiqdBCt7keXJw71gCZrCFjvTVgY"
-ADMINS = [1535815443]
-IP = "localhost"
-CHANNELS = ["-1001735192504"]
+from environs import Env
 
-DB_USER = "bob"
-DB_PASS = "admin"
-DB_NAME = "e-bozor"
-DB_HOST = "localhost"
+env = Env()
+env.read_env()
+
+BOT_TOKEN = env.str("BOT_TOKEN") 
+ADMINS = env.list("ADMINS") 
+IP = env.str("ip")
+CHANNELS = env.list("CHANNELS")
+
+DB_USER = env.str("DB_USER")
+DB_PASS = env.str("DB_PASS")
+DB_NAME = env.str("DB_NAME")
+DB_HOST = env.str("DB_HOST")
