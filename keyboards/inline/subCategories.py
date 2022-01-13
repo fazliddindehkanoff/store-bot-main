@@ -10,7 +10,7 @@ async def subCategory(category_id, user_id):
     except:
         cart_id = await db.createCart(user_id=user_id)
     subCategory_btn = InlineKeyboardMarkup(row_width=2)
-    products = db.get_subcategories(category_id)
+    products = await db.get_subcategories(category_id)
     subCategory_btn.insert(InlineKeyboardButton(text="📥 Savat:", callback_data="my_cart"))
     subCategory_btn.insert(InlineKeyboardButton(text="Savatni to’ldirdim ✅", callback_data=f"{cart_id[0]}:book_now"))
     for product in products:

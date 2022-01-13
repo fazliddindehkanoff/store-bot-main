@@ -107,19 +107,19 @@ class Database:
             cursor.execute("update storebot_client set phone = %s where user_id = %s", (phone, user_id))
             self.connection.commit()
 
-    def get_all_categories(self):
+    async def get_all_categories(self):
         with self.connection.cursor() as cursor:
             cursor.execute("select id, category_name from storebot_category")
             row = cursor.fetchall()
         return row
 
-    def get_subcategories(self, category_id):
+    async def get_subcategories(self, category_id):
         with self.connection.cursor() as cursor:
             cursor.execute("select product_name, id from storebot_product where category_id = %s", (category_id,))
             products = cursor.fetchall()
         return products
 
-    def get_product(self, product_id):
+    async def get_product(self, product_id):
         with self.connection.cursor() as cursor:
             cursor.execute("select product_name, description, price from storebot_product where id = %s", (product_id,))
             products = cursor.fetchall()

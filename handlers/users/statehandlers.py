@@ -4,7 +4,7 @@ from aiogram.types import CallbackQuery, InputFile
 
 from loader import dp, bot, db
 from data.config import CHANNELS
-from keyboards.inline.Categories import Category_btns
+from keyboards.inline.Categories import getCategories
 from keyboards.inline.subCategories import subCategory
 from keyboards.inline.tag_btns import tag_btns
 from keyboards.default.getContact import getContactNum
@@ -18,6 +18,7 @@ from keyboards.inline.location_options import locationOptionButtons
 
 @dp.callback_query_handler(text='buy')
 async def control_user(call: types.CallbackQuery, again=False):
+    Category_btns = await getCategories()
     if not again:
         await call.message.delete()
         await call.message.answer("Kategoriyalarni tanlang: ", reply_markup=Category_btns)
@@ -85,6 +86,7 @@ async def reduceProducts(call: types.CallbackQuery):
     item_code = call.data.split(":")[0]
     await db.RemoveCartItem(item_code=item_code)
     await call.message.delete()
+    Category_btns = await getCategories()
     await call.message.answer(text="Qaysi kategoriyani tanlaysiz?",
                               reply_markup=Category_btns)
 
@@ -147,7 +149,7 @@ async def product_info(call: CallbackQuery):
         item_code = uuid.uuid4()
         item_code = str(item_code)
         await db.createCartItem(quantity=int(0), cart_id=cart_id, product_id=product_id, item_code=item_code)
-    product = db.get_product(product_id)
+    product =await db.get_product(product_id)
     product_name = product[0][0]
     description = product[0][1]
     cost = product[0][2]
