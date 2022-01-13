@@ -3,7 +3,7 @@ ADMINS = [1535815443]
 IP = "localhost"
 CHANNELS = ["-1001735192504"]
 
-DB_USER = "wyjiqjlbuepssx"
-DB_PASS = "38b7ed77617b9a3c98b117bde8069d2ce3577c9422f57e6e293378ec0c8f6b25"
-DB_NAME = "d1djupr6to0fbr"
-DB_HOST = "ec2-34-233-214-228.compute-1.amazonaws.com"
+DB_USER = "bob"
+DB_PASS = "admin"
+DB_NAME = "e-bozor"
+DB_HOST = "localhost"

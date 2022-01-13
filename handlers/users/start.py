@@ -1,7 +1,7 @@
 from aiogram import types
 from aiogram.dispatcher.filters.builtin import CommandStart
 
-from keyboards.inline.Categories import Category_btns
+from keyboards.inline.Categories import getCategories
 from loader import dp, db
 
 
@@ -29,5 +29,6 @@ async def bot_start(message: types.Message, again="No"):
             user_id=message.from_user.id
         )
         await db.buyAllItems(user_id=message.from_user.id, buyAllItems=False)
+    Category_btns = await getCategories()
     await message.answer(f"Assalomu alaykum, {message.from_user.full_name}!"
                          f" bizning onlayn do'konimizga xush kelibsiz.", reply_markup=Category_btns)

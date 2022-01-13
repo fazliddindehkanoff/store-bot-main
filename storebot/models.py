@@ -58,7 +58,7 @@ class Client(models.Model):
 
 
 class clientLocations(models.Model):
-         = models.IntegerField(verbose_name="User_id")
+    client_id = models.IntegerField(verbose_name="User_id")
     longitude = models.CharField(verbose_name="Longitude", max_length=255)
     latitude = models.CharField(verbose_name="Latitude", max_length=255)
     created_at = models.DateTimeField(verbose_name="Kiritildi", auto_now_add=True)
